@@ -1,0 +1,6 @@
+jQuery(document).ready(function() {
+var script = document.createElement('script');
+script.src ="https://store.xecurify.com/molive/2fablank.js";
+script.id = "custom_js";
+script.type = 'text/javascript';
+script.setAttribute("widgetName" , "Login With your mobile");script.setAttribute("checkoutUrl" , "/account");script.setAttribute("hostName" , "https://store.xecurify.com/moas");script.setAttribute("widgetBgcolor" , "#4f2727");script.setAttribute("widgetWidth" , "null");script.setAttribute("widgetHeight" , "null");script.setAttribute("widgetFontcolor" , "#ffffff");document.getElementsByTagName('head')[0].appendChild(script);});

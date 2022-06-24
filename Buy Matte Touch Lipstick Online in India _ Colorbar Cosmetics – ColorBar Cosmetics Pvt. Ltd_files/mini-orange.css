@@ -1,0 +1,282 @@
+/* mobile login miniorange */
+#MOLoginModal {
+    position: fixed;
+    padding-top: 16% !important;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+    z-index: 2147483647 !important;
+    align-items: center;
+}
+
+
+#updateModal {
+    position: fixed;
+    padding-top: 16% !important;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+    z-index: 2147483647 !important;
+    align-items: center;
+}
+
+.mo-modal-content { 
+    height: 446px !important;
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 5px;
+    border: 1px solid #888;
+    width: 100%;
+    text-align: center;
+    max-width: 421px;
+}
+#submitButton {
+	position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    max-width: fit-content;
+    bottom: 20px;
+  font-size: 12px !important;
+      background-color: #48100a !important;
+    padding: 4px 60px !important;
+}
+#verifyButton {
+		position: absolute;
+    left: 0;
+    right: 0;
+    margin: 15px auto;
+  	
+    max-width: fit-content;
+	  font-size: 12px !important;
+      bottom: 75px;
+    padding: 4px 60px !important;
+    background-color: #48100a !important;
+}
+#updatenumbersubmit {
+		position: absolute;
+    left: 0;
+    right: 0;
+    margin: 15px auto;
+  	
+    max-width: fit-content;
+	  font-size: 12px !important;
+      bottom: 25px !important;
+    padding: 4px 60px !important;
+    background-color: #48100a !important;
+}
+#MOheading {
+	color: #0d0d0d;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px !important;
+    display: inline-block;
+    font-family: sans-serif;
+    border-bottom: 3px solid #48100a !important;
+  margin-bottom: 0px !important;
+}
+
+#passInput {
+height: 35px !important;
+    width: 35px !important;
+    border-radius: 7px !important;
+    border: 2px solid rgb(72 16 10) !important;
+}
+#input-code {
+	    top: -30px;
+    position: relative;
+}
+
+.iti--separate-dial-code{
+    background-color: rgba(0,0,0,0) !important;
+}
+
+.iti__selected-flag {
+    background-color: rgba(0,0,0,0) !important;
+}
+
+.tab-button{
+  text-align : center;
+}
+
+.input-text-mobile{
+	 border: 1px solid #000 !important;
+}
+
+@media (min-width:420px) & (max-width: 912px) {
+  .mo-modal-content {
+    width: 100% !important;
+    
+  }
+}
+
+@media (max-width: 392px) {
+  #logincorr {
+    left: 0 !important;
+    
+  }
+  
+}
+
+@media (max-width: 1024px) {
+ #logincorr .iti__flag-container {
+    left: 0 !important;
+    
+  }
+  
+  .
+}
+
+@media (max-width: 1024px) {
+ #logincorr .iti__flag-container {
+    left: 0 !important;
+    
+  }
+  
+  
+}
+
+@media (max-width: 421px) {
+  
+  #logincorr .label-required {
+    
+      top: 5px !important; 
+      left: -21% !important; 
+      
+  }
+ }
+
+
+    
+
+
+@media (max-width: 1024px) {
+  
+ .popup-account .iti__flag-container {
+   
+    left: 0 !important;
+    
+  }
+}
+
+ @media (min-width:293px) and (max-width: 299px)  {
+  
+ .popup-account .input-text-mobile {
+   
+    max-width: 113% !important;
+    border: 1px solid #000 !important;
+     
+  }
+}
+
+ @media (min-width:273px) and (max-width: 293px)  {
+  
+ .popup-account .input-text-mobile {
+   
+    max-width: 109% !important;
+    border: 1px solid #000 !important;
+     
+  }
+}
+
+@media (max-width:273px) {
+  
+ .popup-account .input-text-mobile {
+   
+    max-width: 103% !important;
+    border: 1px solid #000 !important;
+     
+  }
+}
+  
+  @media (min-width:299px) and (max-width: 309px) {
+  
+ .popup-account .input-text-mobile {
+   
+    max-width: 121% !important;
+    border: 1px solid #000 !important;
+     
+  }
+    
+  }
+
+ @media (min-width:309px) and (max-width: 322px) {
+  
+ .popup-account .input-text-mobile {
+   
+    max-width: 132% !important;
+    border: 1px solid #000 !important;
+     
+  }
+    
+  }
+    
+    
+  @media (min-width:322px) and (max-width: 329px) {
+  
+ .popup-account .input-text-mobile {
+   
+    width: 131% !important;
+    border: 1px solid #000 !important;
+     
+  }
+    
+  }
+
+@media (min-width:329px) and (max-width: 340px) {
+  
+ .popup-account .input-text-mobile {
+   
+    width: 137% !important;
+    border: 1px solid #000 !important;
+     
+  }
+    
+  }
+  
+  
+  .popup-account .tab-button {
+  	text-align:center !important
+  }
+  
+  
+  .popup-account .mobile-button{
+    
+  	border-radius: 30px;
+    border: 0.5px solid;
+    padding: 5px 10px;
+    background: transperent;
+  
+  }
+}
+
+@media (min-width: 200px) & (max-width: 402px) {
+  
+ #mobileError {
+   
+    margin: -10% !important;
+    
+  }
+  
+  
+  
+  }
+
+
+.iti__selected-dial-code{
+	
+  font-size:12px !important
+	
+}
+
+
+/* mobile login miniorange */

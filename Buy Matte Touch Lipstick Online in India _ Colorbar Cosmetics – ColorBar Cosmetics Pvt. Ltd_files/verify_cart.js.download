@@ -1,0 +1,798 @@
+
+
+(function(){
+	function SA() {}
+	window.SA = (function()
+	{
+		var sATracker = function(jQuery){
+				SA.loadLink('https://colorbar-online.myshopify.com/apps/sa/sa_validate_otp.css');
+				//return afterLoad();
+                 				
+
+		}
+				
+		SA.labelLoadjQuery = function(afterLoad)
+		{
+			if(typeof jQuery === 'undefined'){
+			return SA.labelLoadScript("//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js", function()
+			{
+				jQuery1102 = jQuery.noConflict();
+				sATracker(jQuery1102);
+
+				//SA.loadLink('https://colorbar-online.myshopify.com/apps/sa/sa_validate_otp.css');
+				//return afterLoad();
+			});
+			} else {
+				sATracker(jQuery);
+			}
+
+
+
+
+		};
+		
+		SA.loadIntelinputUtil = function()
+		{
+			
+			if(typeof Shopify.Checkout == 'undefined')
+			{
+				
+
+				SA.labelLoadScript('https://colorbar-online.myshopify.com/apps/sa/assets/js/sa-intlTelInput-jquery.min.js',function(){});
+				SA.labelLoadScript('https://colorbar-online.myshopify.com/apps/sa/assets/js/sa-utils.js',function(){
+			
+					//var SAjQuery = jQuery.noConflict();	
+					var phone_fields  = jQuery(".phone-valid");
+					
+					jQuery.each(phone_fields,function(){
+							var phone_selector  = jQuery(this);
+							
+							var field_name = phone_selector.attr("name");
+							
+							
+							var default_cc = '91';
+							var country_code = SA.getCountryByCode(default_cc)[0].iso2.toUpperCase();
+						
+							
+							var object = SA.saIntellinput({hiddenInput:false,initialCountry:country_code});
+							
+							phone_selector.after('<input type="hidden" name="'+field_name+'">');
+
+							phone_selector.intlTelInput(object);
+							
+							var fullnumber =  phone_selector.intlTelInput("getNumber");
+							phone_selector.parents(".iti--separate-dial-code").next('[name="'+field_name+'"]:hidden').val(fullnumber);
+
+							phone_selector.parents(".iti--separate-dial-code").after("<span class='error sa_phone_error' style='display:none'></span>");
+					});
+					
+					jQuery('body').on("keyup",".phone-valid",function(e) {
+						var fullnumber =  jQuery(this).intlTelInput("getNumber");
+						//get number with std code
+						var field_name = jQuery(this).attr('name');
+						jQuery(this).intlTelInput("setNumber",fullnumber);
+						jQuery(this).parents("form").find('[name="'+field_name+'"]:hidden').val(fullnumber);
+						
+						if (jQuery(this).intlTelInput('isValidNumber')) {
+							jQuery("#sa_pno_submit").attr("disabled",false);
+							jQuery(this).parents("form").find(".sa_phone_error").text("");
+						}
+						else{
+								var iti 	= jQuery(this);
+								var invalid_no 		= "Invalid number";
+								var invalid_country = "Invalid country code";
+								var ppvn 			= "Please provide a valid Number";
+								var errorMap = [invalid_no, invalid_country, ppvn, ppvn, invalid_no];
+								
+								var errorCode = iti.intlTelInput('getValidationError');
+								if(iti.val()!='')
+								{
+									iti.parents("form").find(".sa_phone_error").text(errorMap[errorCode]);
+									jQuery("#sa_pno_submit").attr("disabled",true);
+									iti.parents("form").find(".sa_phone_error").removeAttr("style");
+									jQuery("#sa_bis_submit").attr("disabled",true);	
+								}
+								
+								
+						}
+						
+					});
+
+				});
+				SA.loadLink('https://colorbar-online.myshopify.com/apps/sa/assets/css/sa-intlTelInput.min.css');
+			}
+			
+			
+
+		};
+
+		SA.showOtpModel=function(){
+						jQuery('body').append('<div id="sa_validate_ph"></div>');
+						var customer_id = typeof window.ShopifyAnalytics.meta['page']['customerId'] != "undefined" ? window.ShopifyAnalytics.meta['page']['customerId'] : false;
+						
+					
+						var saved_cart_phone = "";
+
+						if(localStorage.getItem('sa_phone') != 'undefined' && localStorage.getItem('sa_phone')!=null)
+						{
+							if(localStorage.getItem('sa_phone').indexOf("+")>-1)
+							{
+								saved_cart_phone = 	localStorage.getItem('sa_phone');
+							}
+							else
+							{
+								saved_cart_phone = 	"+"+localStorage.getItem('sa_phone');
+							}
+						}		
+
+						jQuery('#sa_validate_ph').html('<div class="sa_modal" id="sa_otp_form"><div class="sa_modal_dialog modal-lg modal-sm">    <div class="sa-modal-content"><div class="sa_modal_header"><span class="sa-icon-close"><span>&#10006;</span></div><div class="sa_modal_body sa_modal_form_container"> <div class="sa-block sa_modal_subhead">One Time Password Required</div><form id="" role="form" action="" method="post" class="sa_modal_form"> <input type="hidden" id="sa_customer_id" value=""> <input type="hidden" id="sa_cart_token"><div class="form-group sa_error_block" style="display:none;"></div><div class="input-group min-input-group"> <input class="form-control input-lg phone-valid" name="sa_phone_no" id="sa_phone_no" placeholder="Enter Mobile Number" value="'+saved_cart_phone+'" required="" type="text"></div><div class="form-group"><button type="button" class="btn button" id="sa_pno_submit">Submit</button></div></form></div></div></div></div>');
+												return false;
+					}
+
+
+		
+		SA.getCountryByCode=function(code) {
+			return window.intlTelInputGlobals.getCountryData().filter(
+				function(data){ return (data.dialCode == code) ? data.iso2 : ''; }
+			);
+		}
+
+
+		
+		SA.saIntellinput=function(options){
+					var default_cc = '91';
+										
+					var selected_countries = [];
+		
+					var whitelist_countries = [];
+					
+					for(var c=0;c<selected_countries.length;c++)
+					{
+						var v = SA.getCountryByCode(selected_countries[c]);
+						
+						whitelist_countries.push(v[0].iso2.toUpperCase());
+					}
+					
+					var default_opt = {
+						"initialCountry": 'IN',
+						"separateDialCode": true,
+						"nationalMode": true,
+						"formatOnDisplay": false,
+						"hiddenInput": false,
+						"utilsScript": "/utils.js?v=3.3.1",
+						"onlyCountries": whitelist_countries
+					};
+					if(default_cc!='')
+					{
+						var object = jQuery.extend({},default_opt, options);
+					}
+					else
+					{
+						var object = jQuery.extend(default_opt, {initialCountry: "auto",geoIpLookup: function(success, failure) {
+							jQuery.get("https://ipapi.co/json/").always(function(resp) {
+								var countryCode = (resp && resp.country) ? resp.country : "US";
+								success(countryCode);
+								
+							}).fail(function() {
+								console.log("ip lookup is not working.");
+							});
+						}},options);
+					}
+					
+					
+					return object;
+				};
+		SA.loadLink = function(url)
+		{
+			var style;
+			style = document.createElement("link");
+			style.type = "text/css";
+			style.rel = "stylesheet";
+
+			style.href = url;
+			return document.getElementsByTagName("head")[0].appendChild(style);
+
+		}
+
+		SA.labelLoadScript = function(url, callback)
+		{
+			var script;
+			script = document.createElement("script");
+			script.type = "text/javascript";
+			script.defer = true;
+
+			if (script.readyState)
+			{
+				script.onreadystatechange = function()
+				{
+					if (script.readyState === "loaded" || script.readyState === "complete")
+					{
+						script.onreadystatechange = null;
+						return callback();
+					}
+				};
+			}
+			else
+			{
+				script.onload = function()
+				{
+					return callback();
+				};
+			}
+
+			script.src = url;
+
+			document.getElementsByTagName("head")[0].appendChild(script);
+			return true;
+		};
+
+			SA.getUserPhoneNosFromCheckoutPage = function(data,type="order")
+			{
+				
+				if(type=="order")
+				{
+					var data_arr = data.description.order;
+				}
+				else if(type=="checkout")
+				{
+					var data_arr = data.checkout;
+				}
+			
+
+				if(typeof data_arr.phone != 'undefined' && data_arr.phone!=null)
+				{
+					return data_arr.phone.replace(/\s|\+/g,'');
+				}
+				else if(typeof data_arr.billing_address.phone != 'undefined' && data_arr.billing_address.phone != null)
+				{
+					return data_arr.billing_address.phone.replace(/\s|\+/g,'');
+				}
+				else if(typeof data_arr.shipping_address.phone != 'undefined' && data_arr.shipping_address.phone != null)
+				{
+					return data_arr.shipping_address.phone.replace(/\s|\+/g,'');
+				}
+				else
+				{
+					return "";
+				}
+			}
+			
+			SA.getProductVariantId=function() {
+				var pageURL = window.location.href;
+				var V = "?variant=";
+				if (pageURL.indexOf(V) >= 0){
+					return pageURL.slice(pageURL.indexOf(V) + V.length);
+				} else {
+					var Y = "/products/";
+					var productHandleName = pageURL.slice(pageURL.indexOf(Y) + Y.length);
+					if(productHandleName.includes("?")){
+						productHandleName = productHandleName.split('?')[0];
+					} else {
+						productHandleName = productHandleName;
+					}
+					fetch(`/products/${productHandleName}.js`)
+					.then(response => response.json())
+					.then(product =>  {
+						jQuery('body').append(`<input type="hidden" name="sa_product_var_id" id="sa_product_var_id" value="${product.variants[0].id}" />`);
+						
+					});
+				}
+			}
+			
+			
+			SA.initOTPProcess = function()
+			{
+					
+									
+					
+					//jQuery('body').append('<div id="sa_validate_ph"></div>');
+					
+					/*$('#smsalert_checkout_btn').click(function(){
+						SA.showOtpModel();
+						if($("#sa_quick_buy").length>0){
+							SA.getProductVariantId();
+						}
+						return false;
+					});*/
+					
+					jQuery(document).on('click','#smsalert_checkout_btn,[name="checkout"]',function(){
+						if(jQuery("#sa_quick_buy").length>0){
+							SA.getProductVariantId();
+						}
+						if(jQuery(".js-drawer-close").length>0)
+						{
+							jQuery(".js-drawer-close").trigger("click");
+						}
+						SA.showOtpModel();
+						return false;
+					});	
+
+					jQuery('body').on('click', '.sa-icon-close', function () {
+						jQuery('#sa_otp_form').css('display', 'none');
+					});
+
+					jQuery('body').on('click', '#sa_pno_submit',function () {
+					var phone_no = jQuery.trim(jQuery('[name=sa_phone_no]:hidden').val()).replace(/\s|\+/g,'');
+					if(phone_no=='')
+					{
+						phone_no = jQuery.trim(jQuery('[name=sa_phone_no]').val()).replace(/\s|\+/g,'');
+					}
+					var customer_id = jQuery('#sa_customer_id').val();
+					var cart_token = jQuery('#sa_cart_token').val();
+					var ph_err = jQuery('#sa_ph_err').val();
+					var sub_name = (localStorage.getItem('sa_subscr_name')!=null) ? localStorage.getItem('sa_subscr_name') : "";
+					
+					var pattern = /^[0-9]+/;
+					if (phone_no == '') {
+						jQuery('.sa_error_block').html("Please enter your mobile number.").show();
+						jQuery('#sa_phone_no').css('border-color', 'red');
+					}
+					else if (!pattern.test(phone_no)) {
+						jQuery('.sa_error_block').html('Invalid phone number').show();
+						jQuery('#sa_phone_no').css('border-color', 'red');
+					}
+					else if (phone_no.length > 15 || phone_no.length < 10) {
+						jQuery('.sa_error_block').html('Invalid phone number').show();
+						jQuery('#sa_phone_no').css('border-color', 'red');
+					}
+					else {
+						jQuery('.sa_error_block').html('').hide();
+						jQuery('#sa_phone_no').css('border-color', '#ccc');
+						
+						jQuery('#sa_pno_submit').attr('disabled',true);
+						
+						jQuery(this).html('Please Wait....');
+						
+						
+						var msg = jQuery.ajax({
+										type: "GET", 
+										url: '/cart.js', 
+										async: false
+						}).responseText; 
+					
+						var t = (typeof msg==='object') ? msg : jQuery.parseJSON(msg);
+						var mobile_verified = (typeof t.attributes!='undefined' && t.attributes!=null) ? t.attributes.sa_otp_mobile : '';
+						if(mobile_verified==phone_no)
+						{
+							jQuery('#sa_otp_form').html('<div class="sa_modal_dialog modal-lg modal-sm"><div class="sa-modal-content"><div class="sa_modal_header"></div><div class="sa_modal_body sa_modal_form_container"><div class="sa-block sa_modal_subhead">Number Already Verified</div><div class="form-group sa_error_block sa_success">Your Mobile number is already Verified.</div></div></div>');
+
+
+								if(jQuery("#sa_quick_buy").length>0 && (typeof jQuery("#sa_product_var_id").val() !='undefined' && jQuery("#sa_product_var_id").val() !=''))
+								{
+									
+									var pageURL = window.location.href;
+									var V = "?variant=";
+									if (pageURL.indexOf(V) >= 0){
+										var pv_id = pageURL.slice(pageURL.indexOf(V) + V.length);
+									} else {
+										var pv_id = jQuery('#sa_product_var_id').val();
+									}
+									window.location.href = `https://colorbar-online.myshopify.com/cart/${pv_id}:1?attributes[sa_otp_mobile]=${phone_no}&checkout[shipping_address][phone]=${phone_no}&checkout[email_or_phone]=${phone_no}&checkout[shipping_address][first_name]=${sub_name}`;
+								}
+								else
+								{
+									window.location.href = `https://colorbar-online.myshopify.com/checkout?attributes[sa_otp_mobile]=${phone_no}&checkout[shipping_address][phone]=${phone_no}&checkout[email_or_phone]=${phone_no}&checkout[shipping_address][first_name]=${sub_name}`;
+								}
+
+
+
+
+								
+						}
+						else
+						{
+							jQuery.post('/cart/update.js', "attributes[sa_otp_mobile]=SA_Mobile_Verification_Pending");
+							SA.startOtpAuth(customer_id, phone_no, cart_token);
+						}
+					}
+					return false;
+					});	
+					
+					
+
+					//validate otp process starts here
+					jQuery('body').on('click', '#sa_otp_submit', function () {
+					var phone_no 	= jQuery.trim(jQuery('#sa_phone_no').val());
+					var customer_id = jQuery('#sa_customer_id').val();
+					var otp 		= jQuery('#sa_otp').val();
+
+
+					if (otp == '') {
+						jQuery('.sa_error_block').html('Please enter OTP.').show();
+						jQuery('#sa_phone_no').css('border-color', 'red');
+					}
+					else if (otp.length<3 || otp.length>9) {
+						jQuery('.sa_error_block').html('Invalid OTP Length').show();
+						jQuery('#sa_otp').css('border-color', 'red');
+					}
+					else
+					{
+						
+						jQuery('#sa_otp_submit').attr('disabled', true);
+						jQuery('#sa_resend_link').attr('disabled', true);
+						jQuery(this).text("Please Wait....");
+						
+						jQuery.ajax
+								({
+									url: '/apps/sa/validateotp.php',
+									type: 'GET',
+									async: true,
+									cache: false,
+									jsonpCallback: 'validateOTP',
+									contentType: 'application/json',
+									dataType: 'jsonp',
+									data:
+										{
+											action : 'validateotp',
+											shop: 'colorbar-online.myshopify.com',
+											customer_id: customer_id,
+											mobileno: phone_no,
+											otp: otp
+											
+										},
+									success: function (data) {
+										/* var resp =  data;
+										if(resp.status=='success')
+										{
+											jQuery('#sa_resend_link').attr('disabled', false);
+											jQuery('#sa_otp_submit').attr('disabled', false).text("Validate OTP");
+										} */
+									},
+									error: function (xhr, ajaxOptions, thrownError) {
+										console.log(xhr.status);
+										
+									}
+								});	
+						}
+						return false;
+					});
+
+
+					//re-send process starts here
+					jQuery('body').on('click', '#sa_resend_link', function () {
+
+						var phone_no 	= jQuery.trim(jQuery('#sa_phone_no').val());
+						var customer_id = jQuery('#sa_customer_id').val();
+						var cart_token = jQuery('#sa_cart_token').val();
+						jQuery('#sa_resend_link').text('Resending OTP...').attr('disabled',true);
+						SA.startOtpAuth(customer_id, phone_no, cart_token,true);
+
+						return false;
+					});
+					
+			}
+			
+			SA.fetchOrder = function(data)
+			{
+							//var phone_no = (typeof data.description.order.billing_address.phone != 'undefined' ) ? data.description.order.billing_address.phone.replace(/\s|\+/g,'') : "";
+							
+							
+							var phone_no = SA.getUserPhoneNosFromCheckoutPage(data);
+							var tags =  (typeof data.description.order.tags != 'undefined' ) ? data.description.order.tags : '';
+							
+							
+							
+							var order_id = (typeof Shopify.checkout != 'undefined' ) ? Shopify.checkout.order_id : "";
+							var note_attributes =  (data.description.order.note_attributes!=null) ? data.description.order.note_attributes: new Array();
+							var order_ph = '';
+							jQuery.each(note_attributes,function(k,item){
+								
+								if(item.name=='sa_otp_mobile' && item.value!='SA_Mobile_Verification_Pending'){
+									order_ph =	item.value;
+								}
+									
+							});
+							
+							if(order_ph==phone_no)//is_cart_verification_done
+							{
+								var datas = {}
+								datas['id']=order_id;
+								datas['tags']="Mobile Verified:"+phone_no;
+								SA.updateOrder(order_id,datas);
+							}
+							
+							if(note_attributes.length==0 || order_ph==null || order_ph!=phone_no)//is_cart_verification_not_done
+							{
+								if(tags.indexOf("Mobile Verified")==-1 && phone_no!='')
+								{
+									var cart_token =  '';
+									var customer_id = Shopify.checkout.customer_id;
+									SA.startOtpAuth(customer_id, phone_no, cart_token,true);
+									
+									
+									var datas = {}
+									datas['id']=order_id;
+									datas['tags']="SA_Mobile_Verification_Pending";
+									SA.updateOrder(order_id,datas);
+									jQuery('.content-box').hide();
+									jQuery('.step__footer__continue-btn').hide();
+										
+									Shopify.Checkout.OrderStatus.addContentBox('<div class="sa_modal_dialog modal-lg modal-sm"><div class="sa-modal-content"><div class="sa_modal_header"></div><div class="sa_modal_body sa_modal_form_container"><div class="sa-block sa_modal_subhead">Validate OTP</div><div class="form-group sa_error_block" style="display:none"></div><div class="form-group sa_otp_txt"><input type="number"  placeholder="Enter OTP" class="form-control input-lg required" name="sa_otp" id="sa_otp"><input type="hidden" value="'+phone_no+'" class="form-control input-lg required" id="sa_phone_no"></div><div class="form-group"><button type="button" class="btn button" id="sa_otp_submit">Validate OTP</button> <span id="sa_resend_link" class="sa_otp_form_link" data-number="'+phone_no+'">Resend OTP</span><span class="timer">00:00:00 sec</span></div></div></div>');
+									jQuery('.sa_error_block').addClass('sa_success').html('An OTP has been sent to '+phone_no).show();
+									//SA.timerCount();
+								}
+							}
+						
+							
+							
+							
+			}
+			
+			
+			SA.getOrder = function(order_id)
+			{
+				jQuery.ajax
+					({
+						url: '/apps/sa/validateotp.php',
+						type: 'GET',
+						async: true,
+						cache: false,
+						jsonpCallback: 'fetchOrder',
+						contentType: 'application/json',
+						dataType: 'jsonp',
+						data:
+							{
+								action : 'getOrder',
+								shop: 'colorbar-online.myshopify.com',
+								order_id: order_id
+							},
+						success: function (data) {
+							console.log(data);
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							console.log(xhr.status);
+						}
+					});	
+					return false;
+			}
+			
+			
+			
+			
+			SA.updateOrder = function(order_id,datas)
+			{
+				jQuery.ajax
+					({
+						url: '/apps/sa/validateotp.php',
+						type: 'GET',
+						async: true,
+						cache: false,
+						contentType: 'application/json',
+						dataType: 'jsonp',
+						data:
+							{
+								action : 'updateOrder',
+								shop: 'colorbar-online.myshopify.com',
+								order_id: order_id,
+								order_datas: datas
+							},
+						success: function (data) {
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							console.log(xhr.status);
+							
+						}
+					});	
+					return false;
+			}
+
+			SA.startOtpAuth = function(customer_id, phone_no, cart_token,resend=false){
+
+				jQuery.ajax
+					({
+						url: '/apps/sa/validateotp.php',
+						type: 'GET',
+						async: true,
+						cache: false,
+						jsonpCallback: 'generateOTP',
+						contentType: 'application/json',
+						dataType: 'jsonp',
+						data:
+							{
+								action : 'generateotp',
+								shop: 'colorbar-online.myshopify.com',
+								customer_id: customer_id,
+								mobileno: phone_no
+							},
+						success: function (data) {
+							var resp =  data;
+							if(resp.status=='success')
+							{
+								jQuery('#sa_phone_no').attr('value', data.description.batch_dtl[0].mobileno);
+								jQuery('#sa_pno_submit').css('background-color', '#CCCCCC');
+								if(resend)
+								{
+									jQuery('#sa_resend_link').text('Resend OTP').attr('disabled',false);
+								}
+							}
+							else
+							{
+								jQuery('.sa_error_block').text(data.description);
+								jQuery('#sa_pno_submit').text('Submit').attr('disabled',false);
+							}
+							
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+							console.log(xhr.status);
+							
+						}
+					});	
+					
+				return false;	
+			}
+
+			SA.generateOTP = function(data){
+				if(data.status=='error')
+				{
+					jQuery('.sa_error_block').removeClass('sa_success').html(data.description).show();
+				}
+				else
+				{
+					var phone_no = data.description.batch_dtl[0].mobileno;
+					jQuery('#sa_otp_form').html('<div class="sa_modal_dialog modal-lg modal-sm"><div class="sa-modal-content"><div class="sa_modal_header"><span class="sa-icon-close"><span>&#10006;</span></span></div><div class="sa_modal_body sa_modal_form_container"><div class="sa-block sa_modal_subhead">Validate OTP</div><div class="form-group sa_error_block" style="display:none"></div><div class="form-group sa_otp_txt"><input type="number"  placeholder="Enter OTP" class="form-control input-lg required" name="sa_otp" id="sa_otp"><input type="hidden" value="'+phone_no+'" class="form-control input-lg required" id="sa_phone_no"></div><div class="form-group"><button type="button" class="btn button" id="sa_otp_submit">Validate OTP</button> <span id="sa_resend_link" class="sa_otp_form_link" data-number="'+phone_no+'">Resend OTP</span><span class="timer">00:00:00 sec</span></div></div></div>');
+					jQuery('.sa_error_block').addClass('sa_success').html('An OTP has been sent to '+phone_no).show();
+					SA.timerCount();
+				}
+			}
+
+
+			SA.timerCount= function(otp_timer=15){
+				var timer = function(secs){
+					var sec_num = parseInt(secs, 10)    
+					var hours   = Math.floor(sec_num / 3600) % 24
+					var minutes = Math.floor(sec_num / 60) % 60
+					var seconds = sec_num % 60    
+					hours = hours < 10 ? "0" + hours : hours;
+					minutes = minutes < 10 ? "0" + minutes : minutes;
+					seconds = seconds < 10 ? "0" + seconds : seconds;
+					return [hours,minutes,seconds].join(":")
+				};
+				
+				jQuery(".timer").show();
+				jQuery(".timer").html(timer(otp_timer)+" sec");
+				
+				
+				var counter = otp_timer;
+					interval = setInterval(function() {
+					counter--;
+						var places = (counter < 10 ? "0" : "");
+						jQuery(".timer").html(timer(counter)+" sec");
+					if (counter == 0) {
+						counterRunning=false;
+						jQuery(".timer").hide();
+						var cssString = "pointer-events: auto; cursor: pointer; opacity: 1; float:right"; 
+						jQuery(".sa_otp_form_link").attr("style",cssString);
+						clearInterval(interval);
+					}
+					else
+					{
+						var cssString = "pointer-events: none; cursor: default; opacity: 1; float:right";
+						jQuery(".sa_otp_form_link").attr("style",cssString);
+					}
+				}, 1000);
+			}
+
+			SA.redirectTOCheckout = function(phone){
+				var sub_name = (localStorage.getItem('sa_subscr_name')!=null) ? localStorage.getItem('sa_subscr_name') : "";
+										if(jQuery("#sa_quick_buy").length>0 && (typeof jQuery("#sa_product_var_id").val() !='undefined' && jQuery("#sa_product_var_id").val() !=''))
+										{
+											
+											var pageURL = window.location.href;
+											var V = "?variant=";
+											if (pageURL.indexOf(V) >= 0){
+												var pv_id = pageURL.slice(pageURL.indexOf(V) + V.length);
+											} else {
+												var pv_id = jQuery('#sa_product_var_id').val();
+											}
+											window.location.href = `https://colorbar-online.myshopify.com/cart/${pv_id}:1?attributes[sa_otp_mobile]=${phone}&checkout[shipping_address][phone]=${phone}&checkout[email_or_phone]=${phone}&checkout[shipping_address][first_name]=${sub_name}`;
+										}
+										else
+										{
+											window.location.href = `https://colorbar-online.myshopify.com/checkout?attributes[sa_otp_mobile]=${phone}&checkout[shipping_address][phone]=${phone}&checkout[email_or_phone]=${phone}&checkout[shipping_address][first_name]=${sub_name}`;
+										}
+			}
+			SA.validateOTP = function(data)
+			{
+				
+				if(data.status=='success' && data.description.desc=='Code Matched successfully.')
+				{
+					jQuery('.sa_error_block').addClass('sa_success').html(data.description.desc).show();
+					var order_id = (typeof Shopify.checkout != 'undefined' ) ? Shopify.checkout.order_id : "";
+					
+					if(order_id=="")
+					{
+						var phone = jQuery('#sa_phone_no').val();
+						var msg = jQuery.ajax({
+										type: "GET", 
+										url: '/cart.js', 
+										async: false
+						}).responseText; 
+					
+						var t = (typeof msg==='object') ? msg : jQuery.parseJSON(msg);
+						var mobile_verified = (typeof t.attributes!='undefined' && t.attributes!=null) ? t.attributes.sa_otp_mobile : '';
+						if(mobile_verified=='SA_Mobile_Verification_Pending')
+						{
+							
+							if (typeof jQuery != 'undefined') {  
+								if(jQuery.fn.jquery<='2.2.3')
+								{
+									jQuery.post('/cart/update.js', `attributes[sa_otp_mobile]=${phone}`).complete(function(){
+										SA.redirectTOCheckout(phone);
+									});	
+								}
+								else
+								{
+									jQuery.post('/cart/update.js', `attributes[sa_otp_mobile]=${phone}`).done(function(){
+										SA.redirectTOCheckout(phone);
+									});	
+								}
+							}
+							
+							jQuery.post('/cart/update.js', `attributes[sa_otp_mobile]=${phone}`).complete(function(){
+								
+								var sub_name = (localStorage.getItem('sa_subscr_name')!=null) ? localStorage.getItem('sa_subscr_name') : "";
+								if(jQuery("#sa_quick_buy").length>0 && (typeof jQuery("#sa_product_var_id").val() !='undefined' && jQuery("#sa_product_var_id").val() !=''))
+								{
+									
+									var pageURL = window.location.href;
+									var V = "?variant=";
+									if (pageURL.indexOf(V) >= 0){
+										var pv_id = pageURL.slice(pageURL.indexOf(V) + V.length);
+									} else {
+										var pv_id = jQuery('#sa_product_var_id').val();
+									}
+									window.location.href = `https://colorbar-online.myshopify.com/cart/${pv_id}:1?attributes[sa_otp_mobile]=${phone}&checkout[shipping_address][phone]=${phone}&checkout[email_or_phone]=${phone}&checkout[shipping_address][first_name]=${sub_name}`;
+								}
+								else
+								{
+									window.location.href = `https://colorbar-online.myshopify.com/checkout?attributes[sa_otp_mobile]=${phone}&checkout[shipping_address][phone]=${phone}&checkout[email_or_phone]=${phone}&checkout[shipping_address][first_name]=${sub_name}`;
+								}
+
+
+							});
+							
+							
+							
+						
+						}
+						
+						
+						
+					}
+					
+					
+					
+					if(order_id!="")
+					{
+						var phone_no = SA.getUserPhoneNosFromCheckoutPage(Shopify,"checkout");
+						
+						var datas = {}
+						datas['id']=order_id;
+						datas['tags']="Mobile Verified:"+phone_no;
+						SA.updateOrder(order_id,datas);
+					}
+					
+					
+					jQuery('.sa_modal_dialog').html('<div class="sa-modal-content"><div class="sa_modal_header"></div><div class="sa_modal_body sa_modal_form_container"><div class="sa-block sa_modal_subhead">Success</div><div class="form-group sa_error_block sa_success">Your Mobile number is Verified. Thank you.</div></div>');
+					
+					
+					
+				}
+				else
+				{
+					jQuery('.sa_error_block').removeClass('sa_success').html(data.description.desc).show();
+					jQuery('#sa_otp_submit').text('Validate OTP').removeAttr("disabled");
+					
+				}
+			}
+		return SA;
+	})();
+
+
+			SA.labelLoadjQuery();
+			
+			
+
+		}).call(this);	
+		
+ 

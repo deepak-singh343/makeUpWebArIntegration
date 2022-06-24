@@ -1,0 +1,268 @@
+#sa_cart_validate
+{
+    float: right;
+    margin-right: 20px;
+}
+.form-group 
+{
+    margin-bottom: 15px;
+}
+.form-control 
+{
+    font-family: Arial;
+    font-style: italic;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #7b7b7b;
+    display: block;
+    font-size: 16px;
+    height: 44px;
+    line-height: 1.42857;
+    transition: border-color 0.15s easa-in-out 0s, box-shadow 0.15s easa-in-out 0s;
+    width: 98%;
+    font-weight: 500;
+    padding-left: 10px;
+    border-radius: 0;
+}
+.input-group
+{
+    border-collapse: separate;
+    display: table;
+    position: relative;
+    width:100%;
+    float:left;
+	margin-bottom: 10px;
+}
+.input-group-addon:first-child {
+    border-right: 0 none;
+    border-radius: 0;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    color: #555;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    padding: 14px 12px;
+    text-align: center;
+    width:10%;
+    float:left;
+}
+.input-group > input
+{
+    width: 100%;
+    float:left;
+}
+
+
+.sa_otp_txt
+{
+    position: relative;
+}
+.sa_otp_txt .sa_tooltiptext::after 
+{
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #E85757 transparent transparent transparent;
+} 
+.sa_otp_txt .sa_tooltiptext 
+{
+    visibility: hidden;
+    width: 250px;
+    background-color: #E85757;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 115%;
+    right: 0;
+    font-size: 14px;
+}
+
+
+.sa_modal
+{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: rgba(0,0,0,0.44);
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.sa_modal .sa_modal_dialog
+{
+    transform: translate3d(0px, 0px, 0px);
+    transition: transform 0.3s easa-out 0s;
+    margin: 10px;
+    position: relative;
+    width: auto;
+}
+.sa_modal .sa-modal-content
+{
+    width: 520px;
+    top: 150px;
+    background-color: #FFF;
+    position: relative;
+    margin: auto;
+    outline: 0 none;
+    border-radius: 5px;
+}
+
+.sa_modal .sa_modal_header .close 
+{
+     color: #000;
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.2;
+    text-shadow: 0 1px 0 #fff;
+    cursor: pointer;
+}
+.sa_modal .sa_modal_header #sa_modal_head
+{
+    font-size: 30px;
+    color: #252525;
+    font-weight: 500;
+    width: 100%;
+    float:left;
+    text-align: center;
+    line-height: 40px;
+    background-color: #f2f2f2;
+}
+.sa_modal .sa_modal_subhead
+{
+    font-size: 14px;
+    color: #333333;
+    font-weight: 400;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+.sa_modal .sa_modal_header hr
+{
+    float: left;
+    width:100%;
+    border:0;
+    background-color: #ddd;
+    height:1px;
+    margin-top: 0;
+}
+.sa_modal_form_container
+{
+    padding: 15px;
+}
+.sa_model .sa_modal_body 
+{
+    padding: 15px;
+    position: relative;
+}
+.sa_modal .sa_modal_footer 
+{
+    border-top: 1px solid #e5e5e5;
+    padding: 15px;
+    text-align: right !important;
+}
+.sa-icon-close
+{
+    float: right;
+    cursor: pointer;
+}
+.sa-icon-close span
+{
+    padding: 5px 5px 0px 0px;
+   /*  position: absolute;
+    right: 10px;
+    top: 4px; */
+    opacity: 0.78;
+    color: #5f5f5f;
+    font-weight: bold;
+    font-size: 18px;
+}
+.sa-icon-close:hover span
+{
+    opacity: 1;
+}
+.sa-hide
+{
+    display: none ;
+}
+.sa-block
+{
+    display: block;
+}
+.sa-left
+{
+    text-align: left !important;
+}
+.sa-right
+{
+    text-align: right !important;
+}
+.sa_error_block,.sa_success_block
+{
+    color: #e42c00;
+    text-align: left !important;
+    font-size: 12px;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    background: none;
+    text-transform: capitalize;
+    border-left: 5px solid #e42c00;
+}
+
+
+.sa_success
+{
+    color: #0f834d;
+    border-left: 5px solid #0f834d;
+}
+
+
+
+.sa_note_block
+{
+    color: #999;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 700;
+    margin-top: -10px;
+    text-align: left !important;
+}
+.sa_otp_form_link
+{
+    font-size: 12px;
+    color: #F45B4F;
+    font-weight: 700;
+    font-style: italic;
+    cursor: pointer;
+	padding: 8px;
+	float:right;
+}
+
+.timer{float:right;padding:5px}
+div.iti__flag:empty{display:block;}
+
+@media only screen and (max-width: 1024px) {
+     .sa_modal .sa-modal-content
+    {
+        width: auto;
+        margin: 0 auto;
+    }
+}
